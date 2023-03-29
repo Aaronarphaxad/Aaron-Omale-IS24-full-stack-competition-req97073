@@ -22,5 +22,11 @@ To run the application, follow these steps:
 - Install the necessary dependencies by running npm install in the terminal.
 - Start the Next.js application by running npm run dev in the terminal.
 - Open your browser and navigate to localhost:3000.
-- Swagger API Documentation
+## Swagger API Documentation
 - The Swagger API documentation can be found at localhost:3000/api-docs. This documentation provides details on the available endpoints and how to use them.
+
+## Notes:
+Due to personal obligations, there are certain features I could not add because I am short of time, but it was great to build this. I really much enjoyed building the app. If I had more time, I would've loved to improve the following features:
+
+- Form flow of create product process. So the user will only see error messages when they attempt to save without filling the forms.
+- Overall styling and alignments of forms to create/edit.

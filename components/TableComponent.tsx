@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -27,8 +27,8 @@ interface MyPageProps {
 }
 
 const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [page, setPage] = React.useState(1);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [open, setOpen] = React.useState(false);
   const [openDelete, setOpenDelete] = React.useState<boolean>(false);
   const [productData, setProductData] = React.useState([]);
@@ -49,24 +49,25 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
 
   // Pagination functions
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    setPage(newPage + 1);
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(1);
   };
 
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
 
-
- /**
-  * It sets the active search bar to the searchBy parameter, and if the searchBy parameter is
-  * "developer", it sets the scrumMaster state to an empty string, and if the searchBy parameter is
-  * "scrumMaster", it sets the developer state to an empty string
-  * @param {"developer" | "scrumMaster"} searchBy - "developer" | "scrumMaster"
-  */
+  /**
+   * It sets the active search bar to the searchBy parameter, and if the searchBy parameter is
+   * "developer", it sets the scrumMaster state to an empty string, and if the searchBy parameter is
+   * "scrumMaster", it sets the developer state to an empty string
+   * @param {"developer" | "scrumMaster"} searchBy - "developer" | "scrumMaster"
+   */
   const handleSetActiveSearchBar = (searchBy: "developer" | "scrumMaster") => {
     setActiveSearchBar(searchBy);
     if (searchBy === "developer") {
@@ -84,29 +85,31 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
       setProductData(data);
       // console.log(data);
     }
-     /**
-  * It takes the developer name from the input field and sends it to the backend to search for the
-  * developer
-  */
-  const handleSearchDeveloper = async () => {
-    // setScrumMaster("");
-    const res = await fetch(`/api/search?searchBy=developer&name=${developer}`);
-    const data = await res.json();
-    setProductData(data);
-  };
+    /**
+     * It takes the developer name from the input field and sends it to the backend to search for the
+     * developer
+     */
+    const handleSearchDeveloper = async () => {
+      // setScrumMaster("");
+      const res = await fetch(
+        `/api/search?searchBy=developer&name=${developer}`
+      );
+      const data = await res.json();
+      setProductData(data);
+    };
 
-/**
- * It takes the value of the scrumMaster input field and uses it to make a fetch request to the
- * backend. The backend then returns a list of products that match the scrumMaster name
- */
-  const handleSearchScrum = async () => {
-    // setDeveloper("");
-    const res = await fetch(
-      `/api/search?searchBy=scrumMaster&name=${scrumMaster}`
-    );
-    const data = await res.json();
-    setProductData(data);
-  };
+    /**
+     * It takes the value of the scrumMaster input field and uses it to make a fetch request to the
+     * backend. The backend then returns a list of products that match the scrumMaster name
+     */
+    const handleSearchScrum = async () => {
+      // setDeveloper("");
+      const res = await fetch(
+        `/api/search?searchBy=scrumMaster&name=${scrumMaster}`
+      );
+      const data = await res.json();
+      setProductData(data);
+    };
 
     if (developer) {
       handleSearchDeveloper();
@@ -116,6 +119,11 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
       fetchData();
     }
   }, [refresh, developer, scrumMaster]);
+
+  /* A memoized function that returns the productData sliced from the startIndex to the endIndex. */
+  const paginatedProductData = useMemo(() => {
+    return productData.slice(startIndex, endIndex);
+  }, [startIndex, endIndex, productData]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
@@ -167,7 +175,7 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
 
       {productData.length > 0 && (
         <>
-          <TableContainer sx={{ maxHeight: 500 }}>
+          <TableContainer sx={{ maxHeight: 650 }}>
             <Table stickyHeader aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -199,7 +207,7 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {productData?.map((row: Product) => {
+                {paginatedProductData?.map((row: Product) => {
                   return (
                     <TableRow
                       hover
@@ -247,14 +255,18 @@ const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
             component="div"
             count={productData?.length}
             rowsPerPage={rowsPerPage}
-            page={page}
+            page={page - 1}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </>
       )}
 
-      {productData.length <= 0 && <div className="not-found">Sorry, not found. <AiFillSecurityScan /></div>}
+      {productData.length <= 0 && (
+        <div className="not-found">
+          Sorry, not found. <AiFillSecurityScan />
+        </div>
+      )}
     </Paper>
   );
 };

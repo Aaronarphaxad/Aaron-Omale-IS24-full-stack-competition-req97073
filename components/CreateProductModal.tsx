@@ -3,7 +3,14 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import { TextField, Box, FormHelperText, Select, SelectChangeEvent, MenuItem } from "@mui/material/";
+import {
+  TextField,
+  Box,
+  FormHelperText,
+  Select,
+  SelectChangeEvent,
+  MenuItem,
+} from "@mui/material/";
 
 /* Defining the data that will be sent to the server. */
 interface FormData {
@@ -45,7 +52,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   openCreate,
   setOpenCreate,
   setRefresh,
-}) => {
+}: CreateProductModalProps) => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<CreateInterface>({
     productName: "",
@@ -236,7 +243,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 error={Boolean(data.errors.scrumMasterName)}
                 helperText={data.errors.scrumMasterName}
               />
-             
+
               {data.Developers.map((developer, index) => (
                 <TextField
                   key={index}
@@ -247,20 +254,19 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               ))}
             </div>
             <div>
-             
-                <FormHelperText>Methodology</FormHelperText>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={data?.methodology}
-                  label="Methodology"
-                  onChange={(event: SelectChangeEvent<string>) =>
-                    handleSelectChange(event.target.value)
-                  }
-                >
-                  <MenuItem value={"Agile"}>Agile</MenuItem>
-                  <MenuItem value={"Waterfall"}>Waterfall</MenuItem>
-                </Select>
+              <FormHelperText>Methodology</FormHelperText>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={data?.methodology}
+                label="Methodology"
+                onChange={(event: SelectChangeEvent<string>) =>
+                  handleSelectChange(event.target.value)
+                }
+              >
+                <MenuItem value={"Agile"}>Agile</MenuItem>
+                <MenuItem value={"Waterfall"}>Waterfall</MenuItem>
+              </Select>
               <TextField
                 label="Start Date"
                 name="startDate"
