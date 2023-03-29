@@ -9,11 +9,11 @@ This is a web application that tracks and manages web applications developed by 
 - Frontend Web Application Framework: Next.js (React)
 - Assumptions: Basic development tools installed such as node, npm, and docker
 # User Stories
-As a user, I want to be able to create a new web application and save it to the database (local file).
-As a user, I want to be able to view a list of all web applications currently in the database.
-As a user, I want to be able to update the details of a web application and save the changes to the database.
-(BONUS) As a user, I want to be able to search for web applications by name.
-(BONUS) As a user, I want to be able to filter web applications by a variety of criteria, such as technology stack, date of last update, and number of users.
+- As a user, I want to be able to create a new web application and save it to the database (local file).
+- As a user, I want to be able to view a list of all web applications currently in the database.
+- As a user, I want to be able to update the details of the products available, delete products and save the changes to the database.
+- (BONUS) As a user, I want to be able to search for developers and their projects by name.
+- (BONUS) As a user, I want to be able to search for scrum masters by name.
 
 # Running the Application
 To run the application, follow these steps:
