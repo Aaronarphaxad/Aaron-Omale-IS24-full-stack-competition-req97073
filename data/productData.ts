@@ -8,7 +8,7 @@ export interface Product {
   methodology: string;
 }
 
-const productData: Product[] = [
+let productData: Product[] = [
   {
     productId: 1,
     productName: "E-commerce Website",
@@ -623,6 +623,36 @@ const productData: Product[] = [
   },
   {
     productId: 40,
+    productName: "Project Delta",
+    productOwnerName: "David Wilson",
+    Developers: [
+      "Michelle Lee",
+      "Kevin Chen",
+      "Angela Davis",
+      "Jason Kim",
+      "Rebecca Nguyen",
+    ],
+    scrumMasterName: "Richard Johnson",
+    startDate: "2022/06/10",
+    methodology: "Agile",
+  },
+  {
+    productId: 41,
+    productName: "Project Delta",
+    productOwnerName: "David Wilson",
+    Developers: [
+      "Michelle Lee",
+      "Kevin Chen",
+      "Angela Davis",
+      "Jason Kim",
+      "Rebecca Nguyen",
+    ],
+    scrumMasterName: "Richard Johnson",
+    startDate: "2022/06/10",
+    methodology: "Agile",
+  },
+  {
+    productId: 42,
     productName: "Project Delta",
     productOwnerName: "David Wilson",
     Developers: [

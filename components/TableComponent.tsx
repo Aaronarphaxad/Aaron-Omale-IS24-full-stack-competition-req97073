@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { FC } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,23 +11,31 @@ import { Product } from "../data/productData";
 import { headers } from "../data/productData";
 import ProductModal from "./ProductModal";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
+import { DeleteProductModal } from "./DeleteProductModal";
 
 interface MyPageProps {
-  productData: Product[];
+  refresh: boolean;
+  setRefresh: (prev: any) => void;
 }
 
-export default function TableComponent() {
+const TableComponent: FC<MyPageProps> = ({ refresh, setRefresh }) => {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [open, setOpen] = React.useState(false);
-  const [refresh, setRefresh] = React.useState(false);
+  const [openDelete, setOpenDelete] = React.useState<boolean>(false);
   const [productData, setProductData] = React.useState([]);
-  const [dataToSend, setDataToSend] = React.useState<number>();
+  const [dataToSend, setDataToSend] = React.useState<Product>();
+  const [dataToDelete, setDataToDelete] = React.useState<Product | any>();
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handleOpenDelete = () => {
+    setOpenDelete(true);
+  };
+
+  // Pagination functions
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
   };
@@ -45,6 +53,7 @@ export default function TableComponent() {
       const res = await fetch("/api/products");
       const data = await res.json();
       setProductData(data);
+      // console.log(data);
     }
     fetchData();
   }, [refresh]);
@@ -54,7 +63,14 @@ export default function TableComponent() {
       <ProductModal
         open={open}
         handleClose={handleClose}
-        productId={dataToSend}
+        data={dataToSend}
+        setDataToSend={setDataToSend}
+        setRefresh={setRefresh}
+      />
+      <DeleteProductModal
+        openDelete={openDelete}
+        setOpenDelete={setOpenDelete}
+        data={dataToDelete}
         setRefresh={setRefresh}
       />
       <TableContainer sx={{ maxHeight: 500 }}>
@@ -104,7 +120,7 @@ export default function TableComponent() {
                         align={"left"}
                         style={{ textTransform: "capitalize" }}
                       >
-                        {field === "Developers" ? value.join(", ") : value}
+                        {field === "Developers" ? value?.join(", ") : value}
                       </TableCell>
                     );
                   })}
@@ -112,12 +128,18 @@ export default function TableComponent() {
                     <div className="actions">
                       <AiFillEdit
                         onClick={() => {
-                          setDataToSend(row.productId);
+                          setDataToSend(row);
                           setOpen(true);
                         }}
                         style={{ fontSize: "18px" }}
                       />
-                      <AiFillDelete style={{ fontSize: "15px" }} />
+                      <AiFillDelete
+                        style={{ fontSize: "15px" }}
+                        onClick={() => {
+                          setDataToDelete(row);
+                          handleOpenDelete();
+                        }}
+                      />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -137,4 +159,6 @@ export default function TableComponent() {
       />
     </Paper>
   );
-}
+};
+
+export default TableComponent;

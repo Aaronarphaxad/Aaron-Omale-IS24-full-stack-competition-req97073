@@ -11,6 +11,12 @@ import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import { AiOutlineClose } from "react-icons/ai";
 import { Product } from "@/data/productData";
+import {
+  FormHelperText,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from "@mui/material";
 
 /* A function that returns a component. To add animation to the modal */
 const Transition = React.forwardRef(function Transition(
@@ -26,7 +32,8 @@ const Transition = React.forwardRef(function Transition(
 interface ProductModalProps {
   open: boolean;
   handleClose: () => void;
-  productId: number | undefined;
+  data: Product | any;
+  setDataToSend: (prev: any) => void;
   setRefresh: (prev: any) => void;
 }
 
@@ -34,185 +41,181 @@ interface ProductModalProps {
 const ProductModal: React.FC<ProductModalProps> = ({
   open,
   handleClose,
-  productId,
+  data,
+  setDataToSend,
   setRefresh,
 }) => {
-  const [productName, setProductName] = React.useState({
-    value: "",
-    error: false,
-  });
-  const [productOwnerName, setProductOwnerName] = React.useState({
-    value: "",
-    error: false,
-  });
-  const [scrumMasterName, setScrumMasterName] = React.useState({
-    value: "",
-    error: false,
-  });
-  const [Developers, setDevelopers] = React.useState({
-    value: [""],
-    error: false,
-  });
-  const [methodology, setMethodology] = React.useState({
-    value: "",
-    error: false,
-  });
-  const [startDate, setStartDate] = React.useState({ value: "", error: false });
-  const [error, setError] = React.useState<boolean>(false);
+  // const [values, setValues] = React.useState<Product>(data);
 
-  const handleSubmit = () => {
-    handleClose();
-    alert(Developers.value);
-    setRefresh((prev: boolean) => (prev = !prev));
+  // React.useEffect(() => {
+  //   setValues(data);
+  // }, [data]);
+
+  console.log(data);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDataToSend({ ...data, [name]: value });
   };
 
-  React.useEffect(() => {
-    /**
-     * It fetches the data from the local data store and sets the state of the form to the data fetched
-     */
-    const handleFetch = async () => {
-      if (open) {
-        try {
-          const response = await fetch("/api/product", {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({ id: productId }),
-          });
+  const handleDeveloperChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const { value } = event.target;
 
-          const data = await response.json();
-          setProductName({ value: data?.productName, error: false });
-          setProductOwnerName({ value: data?.productOwnerName, error: false });
-          setDevelopers({ value: data?.Developers, error: false });
-          setStartDate({ value: data?.startDate, error: false });
-          setScrumMasterName({ value: data?.scrumMasterName, error: false });
-          setMethodology({ value: data?.methodology, error: false });
-        } catch (error) {
-          alert("An error occured");
-        }
-      }
-    };
-    handleFetch();
-  }, [open, productId]);
+    setDataToSend((prevValues: Product) => {
+      const developers = [...prevValues?.Developers];
+      developers[index] = value;
+
+      return { ...prevValues, Developers: developers };
+    });
+  };
+
+  const handleSelectChange = (value: string) => {
+    setDataToSend((prevData: any) => ({ ...prevData, methodology: value }));
+  };
+
+  /**
+   * It takes the values from the form and sends a PUT request to the server with the updated values
+   */
+  const handleSubmit = async () => {
+    try {
+      
+
+      const response = await fetch(`/api/product?id=${data?.productId}`, {
+        method: "PUT",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const dataToSend = await response.json();
+
+      console.log(dataToSend);
+      alert(`${dataToSend?.productName} updated succesfully`);
+      setRefresh((prev: boolean) => (prev = !prev));
+      handleClear();
+    } catch (error) {
+      alert("An error occured");
+    }
+  };
+
+  const handleClear = () => {
+    handleClose();
+  };
 
   return (
-    <div>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
+    <>
+      <div>
+        <Dialog
+          fullScreen
+          open={open}
+          onClose={handleClear}
+          TransitionComponent={Transition}
+        >
+          <AppBar sx={{ position: "relative" }}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleClear}
+                aria-label="close"
+              >
+                <AiOutlineClose />
+              </IconButton>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                Product Details
+              </Typography>
+            </Toolbar>
+          </AppBar>
+
+          <div className="product-detail-container">
+            <Box
+              component="form"
+              sx={{
+                "& .MuiTextField-root": { m: 2, width: "80ch" },
+              }}
+              noValidate
+              autoComplete="off"
             >
-              <AiOutlineClose />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Product Details
-            </Typography>
-
-            <Button autoFocus color="inherit" onClick={handleSubmit}>
-              save
+              <div>
+                <TextField
+                  id="outlined-error"
+                  label="Product Name"
+                  name="productName"
+                  defaultValue={data?.productName}
+                  onChange={handleChange}
+                />
+                <TextField
+                  label="Product Owner"
+                  name="ProductOwnerName"
+                  defaultValue={data?.productOwnerName}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <TextField
+                  label="Scrum Master"
+                  name="scrumMasterName"
+                  defaultValue={data?.scrumMasterName}
+                  onChange={handleChange}
+                />
+                {/* <TextField
+                  label="Developers"
+                  name="Developers"
+                  defaultValue={data?.Developers}
+                  onChange={handleChange}
+                /> */}
+                {data?.Developers.map((developer: any, index: number) => (
+                  <TextField
+                    key={index}
+                    label={`Developer ${index + 1}`}
+                    value={developer}
+                    onChange={(event) => handleDeveloperChange(event, index)}
+                  />
+                ))}
+              </div>
+              <div>
+                {/* <TextField
+                  label="Methodology"
+                  name="methodology"
+                  defaultValue={data?.methodology}
+                  onChange={handleChange}
+                /> */}
+                <FormHelperText>Methodology</FormHelperText>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={data?.methodology}
+                  label="Methodology"
+                  onChange={(event: SelectChangeEvent<string>) =>
+                    handleSelectChange(event.target.value)
+                  }
+                >
+                  <MenuItem value={"Agile"}>Agile</MenuItem>
+                  <MenuItem value={"Waterfall"}>Waterfall</MenuItem>
+                </Select>
+                <TextField
+                  label="Start Date"
+                  name="startDate"
+                  defaultValue={data?.startDate}
+                  onChange={handleChange}
+                />
+              </div>
+            </Box>
+            <Button
+              variant="contained"
+              style={{ margin: "30px 10px" }}
+              onClick={handleSubmit}
+            >
+              Save
             </Button>
-          </Toolbar>
-        </AppBar>
-
-        <div className="product-detail-container">
-          <Box
-            component="form"
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "30ch" },
-            }}
-            noValidate
-            autoComplete="off"
-            onSubmit={(e) => {
-              e.preventDefault();
-              alert("Form submited");
-            }}
-          >
-            <div>
-              <TextField
-                error={error}
-                id="outlined-error"
-                label="Product Name"
-                defaultValue={productName?.value}
-                onChange={(e) => {
-                  const newObj = { ...productName };
-                  newObj.value = e.target.value;
-                  setProductName(newObj);
-                }}
-              />
-              <TextField
-                error={error}
-                // id="outlined-error-helper-text"
-                label="Product Owner"
-                defaultValue={productOwnerName?.value}
-                onChange={(e) => {
-                  const newObj = { ...productOwnerName };
-                  newObj.value = e.target.value;
-                  setProductOwnerName(newObj);
-                }}
-              />
-            </div>
-            <div>
-              <TextField
-                error={error}
-                // id="filled-error"
-                label="Scrum Master"
-                defaultValue={scrumMasterName?.value}
-                onChange={(e) => {
-                  const newObj = { ...scrumMasterName };
-                  newObj.value = e.target.value;
-                  setScrumMasterName(newObj);
-                }}
-              />
-              <TextField
-                error={error}
-                // id="filled-error-helper-text"
-                label="Developers"
-                defaultValue={Developers?.value}
-                onChange={(e) => {
-                  const newObj = { ...Developers };
-                  newObj.value = e.target.value.split(", ");
-                  setDevelopers(newObj);
-                }}
-              />
-            </div>
-            <div>
-              <TextField
-                error={error}
-                // id="standard-error"
-                label="Methodology"
-                defaultValue={methodology?.value}
-                onChange={(e) => {
-                  const newObj = { ...methodology };
-                  newObj.value = e.target.value;
-                  setMethodology(newObj);
-                }}
-              />
-              <TextField
-                error={error}
-                label="Start Date"
-                defaultValue={startDate?.value}
-                onChange={(e) => {
-                  const newObj = { ...startDate };
-                  newObj.value = e.target.value;
-                  setStartDate(newObj);
-                }}
-              />
-            </div>
-            {/* <button type="submit">Submit</button> */}
-          </Box>
-        </div>
-      </Dialog>
-    </div>
+          </div>
+        </Dialog>
+      </div>
+    </>
   );
 };
 
