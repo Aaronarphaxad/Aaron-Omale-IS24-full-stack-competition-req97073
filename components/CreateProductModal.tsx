@@ -3,7 +3,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import { TextField, Box } from "@mui/material/";
+import { TextField, Box, FormHelperText, Select, SelectChangeEvent, MenuItem } from "@mui/material/";
 
 /* Defining the data that will be sent to the server. */
 interface FormData {
@@ -64,6 +64,8 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     },
   });
 
+  // console.log(data)
+
   /**
    * We're using the spread operator to copy the previous state, then we're updating the value of the
    * name property with the value of the input field
@@ -107,6 +109,10 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
           : null,
       },
     }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setData((prevData: any) => ({ ...prevData, methodology: value }));
   };
 
   function handleClose() {
@@ -230,14 +236,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 error={Boolean(data.errors.scrumMasterName)}
                 helperText={data.errors.scrumMasterName}
               />
-              {/* <TextField
-                label="Developers (comma separated)"
-                name="Developers"
-                value={data.Developers}
-                onChange={handleInputChange}
-                error={Boolean(data.errors.Developers)}
-                helperText={data.errors.Developers}
-              /> */}
+             
               {data.Developers.map((developer, index) => (
                 <TextField
                   key={index}
@@ -248,14 +247,20 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               ))}
             </div>
             <div>
-              <TextField
-                label="Methodology"
-                name="methodology"
-                value={data.methodology}
-                onChange={handleInputChange}
-                error={Boolean(data.errors.methodology)}
-                helperText={data.errors.methodology}
-              />
+             
+                <FormHelperText>Methodology</FormHelperText>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={data?.methodology}
+                  label="Methodology"
+                  onChange={(event: SelectChangeEvent<string>) =>
+                    handleSelectChange(event.target.value)
+                  }
+                >
+                  <MenuItem value={"Agile"}>Agile</MenuItem>
+                  <MenuItem value={"Waterfall"}>Waterfall</MenuItem>
+                </Select>
               <TextField
                 label="Start Date"
                 name="startDate"

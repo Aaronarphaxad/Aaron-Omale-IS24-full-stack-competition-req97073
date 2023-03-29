@@ -17,6 +17,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import { validateInput } from "@/helpers/validate";
 
 /* A function that returns a component. To add animation to the modal */
 const Transition = React.forwardRef(function Transition(
@@ -45,13 +46,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
   setDataToSend,
   setRefresh,
 }) => {
-  // const [values, setValues] = React.useState<Product>(data);
-
-  // React.useEffect(() => {
-  //   setValues(data);
-  // }, [data]);
-
-  console.log(data);
+  // console.log(data);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -80,9 +75,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
    * It takes the values from the form and sends a PUT request to the server with the updated values
    */
   const handleSubmit = async () => {
+    if (!validateInput(data)) {
+      alert("Please fill all inputs and provide at least one developer name");
+      return;
+    }
     try {
-      
-
       const response = await fetch(`/api/product?id=${data?.productId}`, {
         method: "PUT",
         headers: {
@@ -105,6 +102,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
   const handleClear = () => {
     handleClose();
   };
+
+  React.useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <>
@@ -150,7 +151,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 />
                 <TextField
                   label="Product Owner"
-                  name="ProductOwnerName"
+                  name="productOwnerName"
                   defaultValue={data?.productOwnerName}
                   onChange={handleChange}
                 />
@@ -162,12 +163,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   defaultValue={data?.scrumMasterName}
                   onChange={handleChange}
                 />
-                {/* <TextField
-                  label="Developers"
-                  name="Developers"
-                  defaultValue={data?.Developers}
-                  onChange={handleChange}
-                /> */}
+
                 {data?.Developers.map((developer: any, index: number) => (
                   <TextField
                     key={index}
@@ -178,12 +174,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 ))}
               </div>
               <div>
-                {/* <TextField
-                  label="Methodology"
-                  name="methodology"
-                  defaultValue={data?.methodology}
-                  onChange={handleChange}
-                /> */}
                 <FormHelperText>Methodology</FormHelperText>
                 <Select
                   labelId="demo-simple-select-label"
@@ -201,7 +191,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   label="Start Date"
                   name="startDate"
                   defaultValue={data?.startDate}
-                  onChange={handleChange}
+                  // onChange={handleChange}
+                  disabled
                 />
               </div>
             </Box>

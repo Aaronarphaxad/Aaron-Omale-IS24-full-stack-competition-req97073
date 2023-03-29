@@ -137,6 +137,24 @@ body {
   padding: 0 1rem;
 }
 
+.search-div {
+  display: flex;
+  flex-wrap: wrap;
+  width: 80%;
+  justify-content: center;
+  margin: 20px;
+  gap: 1rem;
+}
+
+.not-found {
+  font-size: 20px;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
 @media screen and (max-width: 800px) {
   .product-detail-inner {
     width: 100%;

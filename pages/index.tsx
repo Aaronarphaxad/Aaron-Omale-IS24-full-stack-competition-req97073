@@ -27,7 +27,7 @@ export default function Home() {
             variant="contained"
             endIcon={<AiOutlinePlus />}
             onClick={() => setOpenCreate(true)}
-            style={{ fontSize: "12px" }}
+            style={{ fontSize: "10px" }}
           >
             New Product
           </Button>

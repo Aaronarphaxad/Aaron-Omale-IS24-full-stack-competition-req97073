@@ -18,11 +18,14 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "next": "13.2.4",
+    "next-swagger-doc": "^0.3.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.43.8",
     "react-icons": "^4.8.0",
-    "typescript": "5.0.2",
-    "yup": "^1.0.2"
+    "swagger-ui-react": "^5.0.0-alpha.4",
+    "typescript": "5.0.2"
+  },
+  "devDependencies": {
+    "@types/swagger-ui-react": "^4.11.0"
   }
 }

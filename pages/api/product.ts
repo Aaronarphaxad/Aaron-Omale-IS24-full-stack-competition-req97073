@@ -80,7 +80,7 @@ export default function handler(
         }
         productData.push(newProduct);
 
-        res.status(200).json(newProduct);
+        res.status(201).json(newProduct);
       } catch (error) {
         res.status(400).json({ message: "An error occured" });
       }
@@ -115,7 +115,128 @@ export default function handler(
       break;
 
     default:
-      res.setHeader("Allow", ["GET","POST", "DELETE", "PUT"]);
+      res.setHeader("Allow", ["GET", "POST", "DELETE", "PUT"]);
       res.status(405).end(`Method ${method} Not Allowed`);
   }
 }
+
+/**
+ * @swagger
+ * /api/product/{productId}:
+ *   get:
+ *     summary: Retrieve a product
+ *     description: Retrieve a product by ID
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the product to retrieve
+ *     responses:
+ *       200:
+ *         description: A single product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *   post:
+ *     summary: Create a new product
+ *     description: Create a new product
+ *     requestBody:
+ *       description: The product to create
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       201:
+ *         description: The created product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *   put:
+ *     summary: Update an existing product
+ *     description: Update an existing product by ID
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the product to update
+ *     requestBody:
+ *       description: The updated product data
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       200:
+ *         description: The updated product
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Product'
+ *   delete:
+ *     summary: Delete an existing product
+ *     description: Delete an existing product by ID
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the product to delete
+ *     responses:
+ *       204:
+ *         description: The product was successfully deleted
+ *       404:
+ *         description: The product was not found
+ *
+ * components:
+ *   schemas:
+ *     Product:
+ *       type: object
+ *       required:
+ *         - productId
+ *         - productName
+ *         - productOwnerName
+ *         - Developers
+ *         - scrumMasterName
+ *         - startDate
+ *         - methodology
+ *       properties:
+ *         productId:
+ *           type: integer
+ *         productName:
+ *           type: string
+ *         productOwnerName:
+ *           type: string
+ *         Developers:
+ *           type: array
+ *           items:
+ *             type: string
+ *         scrumMasterName:
+ *           type: string
+ *         startDate:
+ *           type: string
+ *         methodology:
+ *           type: string
+ *       example:
+ *         productId: 41
+ *         productName: Project Delta
+ *         productOwnerName: David Wilson
+ *         Developers:
+ *           - Michelle Lee
+ *           - Kevin Chen
+ *           - Angela Davis
+ *           - Jason Kim
+ *           - Rebecca Nguyen
+ *         scrumMasterName: Richard Johnson
+ *         startDate: "2022/06/10"
+ *         methodology: Agile
+ */
