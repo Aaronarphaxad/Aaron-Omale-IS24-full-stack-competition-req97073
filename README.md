@@ -4,7 +4,7 @@ This is a web application that tracks and manages web applications developed by 
 
 # Technology Stack
 - Backend API Framework: Next.js
-- Typscript
+- Typescript
 - Swagger Documentation: Included
 - Frontend Web Application Framework: Next.js (React)
 - Assumptions: Basic development tools installed such as node, npm, and docker
